@@ -1,0 +1,47 @@
+{
+  "name": "skynet-cli",
+  "version": "0.0.1",
+  "description": "Skynet CLI Tool",
+  "main": "./lib/index.js",
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "create": "npm run build && npm run test",
+    "build": "tsc -p .",
+    "test": "sudo npm i -g && pizza",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+  },
+  "keywords": [
+    "cli",
+    "skynet",
+    "typescript",
+    "nodejs",
+    "sia"
+  ],
+  "author": "Peter-Jan Brone <peterjan.brone@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "skycli": "./lib/index.js"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/clear": "^0.1.0",
+    "@types/figlet": "^1.2.0",
+    "@types/fs-extra": "^8.0.1",
+    "@types/yargs": "^15.0.3",
+    "axios": "^0.19.2",
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
+    "dotenv": "^8.2.0",
+    "figlet": "^1.2.1",
+    "form-data": "^3.0.0",
+    "fs-extra": "^8.1.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.10",
+    "nodemon": "^1.18.7",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  }
+}
