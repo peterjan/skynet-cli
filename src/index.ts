@@ -20,6 +20,23 @@ const init = async () => {
     const directory: string = args.directory;
     const portal: string = args.portal;
 
+    // allow uploading single file
+    const fstat = fs.statSync(directory)
+    if (!fstat.isDirectory()) {
+        log(chalk.white('\nUploading', chalk.red.bold(path.resolve(process.cwd(), directory)), 'to', chalk.red.bold(portal), '\n'))
+
+        const uploadResp = await upload(portal, directory)
+        if (uploadResp instanceof Error) {
+            log(chalk.red(`Something went wrong... perhaps try a different portal\n`, uploadResp.message))
+            process.exit(0)
+        }
+
+        log(chalk.green(`Upload complete\n`))
+        log(chalk.white('You can find your file at'))
+        log(chalk.red.bold(`${portal}${uploadResp}\n\n`))
+        return
+    }
+
     log(chalk.white('\nUploading contents of directory', chalk.red.bold(path.resolve(process.cwd(), directory)), 'to', chalk.red.bold(portal), '\n'))
 
     // list all files to upload
@@ -48,18 +65,19 @@ const init = async () => {
     const html = htmlTemplate.replace("REPLACEME", treeHtml)
     fs.writeFileSync(tmploc, html)
 
-    const skylink = await upload(portal, tmploc)
+    const uploadResp = await upload(portal, tmploc)
+    if (uploadResp instanceof Error) {
+        log(chalk.red(`Something went wrong... perhaps try a different portal\n`))
+        log(chalk.red(uploadResp.message))
+        process.exit(0)
+    }
+
     fs.removeSync(tmploc)
     fs.rmdirSync(tmpdir)
     log(chalk.green(`Upload complete\n`))
 
-    if (!skylink) {
-        log(chalk.red(`Something went wrong... perhaps try a different portal\n`))
-        process.exit(0)
-    }
-
-    log(chalk.white('You can find your files at\n'))
-    log(chalk.red.bold(`${portal}${skylink}\n\n`))
+    log(chalk.white('You can find your files at'))
+    log(chalk.red.bold(`${portal}${uploadResp}\n\n`))
 }
 
 const printUsage = () => {
@@ -105,11 +123,6 @@ const parseArgs = (args: string[]): {
     // validate input
     if (!fs.existsSync(out['directory'])) {
         log(chalk.red(`\nFailed to find directory "${out['directory']}"`))
-        process.exit(0)
-    }
-    const stat = fs.statSync(out['directory'])
-    if (!stat.isDirectory()) {
-        log(chalk.red(`\nThe given path is not a directory`))
         process.exit(0)
     }
     axios.get(out['portal']).then(resp => {

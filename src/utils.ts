@@ -1,7 +1,7 @@
 import axios from "axios";
 import FormData from 'form-data';
 import fs from 'fs-extra';
-import path, { basename } from 'path';
+import path from 'path';
 import { Map, SkipFunc } from './types';
 
 require('dotenv').config();
@@ -42,7 +42,7 @@ export function recBuildDirHTML(dir: string, skip: SkipFunc, skylinks: Map) {
 }
 
 const cset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-export async function upload(portal: string, file: string) {
+export async function upload(portal: string, file: string): Promise<string | Error> {
     if (process.env.MOCK_UPLOADS) {
         // return random skylink
         let skylink = '';
@@ -56,12 +56,13 @@ export async function upload(portal: string, file: string) {
     formData.append('file', fs.createReadStream(file));
 
     try {
-        const resp = await axios.post(`${portal}/api/skyfile?filename=${basename(file)}`, formData, {
-            headers: formData.getHeaders()
+        const resp = await axios.post(`${portal}api/skyfile?filename=${path.basename(file)}`, formData, {
+            headers: formData.getHeaders(),
+            maxContentLength: Infinity,
         })
         return resp.data['skylink']
     } catch (err) {
-        throw new Error(`Upload failed with error ${err}`)
+        return new Error(`Upload failed, ${err}`)
     }
 }
 
@@ -77,8 +78,12 @@ export async function uploadMultiple(portal: string, files: string[]): Promise<M
                 } else {
                     process.stdout.write(".");
                 }
-                skylinks[file] = skylink
-                resolve();
+                if (skylink instanceof Error) {
+                    reject(skylink.message)
+                } else {
+                    skylinks[file] = skylink
+                    resolve();
+                }
             }).catch(() => {
                 reject(`Could not upload file ${file}`)
             })
