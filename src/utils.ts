@@ -35,7 +35,7 @@ export function recBuildDirHTML(dir: string, skip: SkipFunc, skylinks: Map) {
             continue;
         }
         html += '<li role="treeitem" class="doc">'
-        html += `<a href="${skylinks[fullpath]}">${path.basename(fullpath)}</a>`
+        html += `<a href="sia://${skylinks[fullpath]}">${path.basename(fullpath)}</a>`
         html += '</li>'
     }
     return html
