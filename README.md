@@ -11,3 +11,8 @@ npm install -g .
 
 ## Demo video
 https://siasky.net/AAA3WhIr8vc3GnWSbZyk6svmNsSlHVTyOojUlgTq_ywxlA
+
+## Usage
+```
+skycli --help
+```
