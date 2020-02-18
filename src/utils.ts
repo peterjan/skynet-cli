@@ -35,7 +35,7 @@ export function recBuildDirHTML(dir: string, skip: SkipFunc, skylinks: Map) {
             continue;
         }
         html += '<li role="treeitem" class="doc">'
-        html += `<a href="sia://${skylinks[fullpath]}">${path.basename(fullpath)}</a>`
+        html += `<a href="${skylinks[fullpath]}">${path.basename(fullpath)}</a>`
         html += '</li>'
     }
     return html
@@ -56,7 +56,9 @@ export async function upload(portal: string, file: string): Promise<string | Err
     formData.append('file', fs.createReadStream(file));
 
     try {
-        const resp = await axios.post(`${portal}api/skyfile?filename=${path.basename(file)}`, formData, {
+        const uuid = generateUUID()
+        const url = `${portal}skynet/skyfile/${uuid}?filename=${path.basename(file)}`
+        const resp = await axios.post(url, formData, {
             headers: formData.getHeaders(),
             maxContentLength: Infinity,
         })
@@ -101,4 +103,13 @@ export function trimTrailingSlash(str: string) {
         return str.substr(0, str.length - 1);
     }
     return str;
+}
+
+export function generateUUID() {
+    let uuid = ''
+    const cs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 16; i++) {
+        uuid += cs.charAt(Math.floor(Math.random() * cs.length));
+    }
+    return uuid;
 }
