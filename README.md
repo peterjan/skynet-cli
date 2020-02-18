@@ -5,7 +5,7 @@ CLI tool to upload directories to Skynet
 To install, simply clone this repository and run
 ```
 npm install -g typescript
-npm run build
+npm install && npm run build
 npm install -g .
 ```
 
