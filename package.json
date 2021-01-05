@@ -28,7 +28,7 @@
     "@types/figlet": "^1.2.0",
     "@types/fs-extra": "^8.0.1",
     "@types/yargs": "^15.0.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chalk": "^2.4.1",
     "clear": "^0.1.0",
     "dotenv": "^8.2.0",
